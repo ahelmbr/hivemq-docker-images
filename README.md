@@ -1,20 +1,23 @@
 
 # Table of Contents
    
-   * [HiveMQ Docker Images](#hivemq-docker-images)
-        * [DNS discovery image](#dns-discovery-image)
-            * [Building](#building)
-            * [Usage](#usage)
-                * [Docker Swarm](#docker-swarm)
-                    * [Managing The Cluser](#managing-the-cluster)
-                * [Kubernetes](#kubernetes)
-                    * [Accessing the Web UI](#accessing-the-web-ui)
-                    * [Accessing the MQTT port using external clients](#accessing-the-mqtt-port-using-external-clients)
-                    * [Setting the Web UI username and password](#setting-the-web-ui-username-and-password)
-                    * [Adding a license](#adding-a-license)
-                    * [Overriding the bind address](#overriding-the-bind-address)
-        * [HiveMQ base image](#hivemq-base-image)
-   * [Tags](#tags)
+   * [HiveMQ Docker images](#hivemq-docker-images)
+      * [DNS Discovery Image](#dns-discovery-image)
+         * [Building](#building)
+         * [Usage](#usage)
+            * [Docker Swarm](#docker-swarm)
+            * [Managing the cluster](#managing-the-cluster)
+            * [Kubernetes](#kubernetes)
+               * [Accessing the Web UI](#accessing-the-web-ui)
+               * [Accessing the MQTT port using external clients](#accessing-the-mqtt-port-using-external-clients)
+         * [Setting the Web UI username and password](#setting-the-web-ui-username-and-password)
+         * [Adding a license](#adding-a-license)
+            * [Encoding as an environment variable](#encoding-as-an-environment-variable)
+            * [Using volumes](#using-volumes)
+               * [Kubernetes](#kubernetes-1)
+         * [Overriding the bind address](#overriding-the-bind-address)
+      * [HiveMQ base image](#hivemq-base-image)
+      * [Tags](#tags)
    
 # HiveMQ Docker images
 
@@ -288,8 +291,8 @@ Follow these steps to include the license file into the deployment directly:
          - name: hivemq-pods
            image: hivemq/hivemq3:dns-latest
            <b>volumeMounts:
-                   - name: configvol-1
-                     mountPath: /opt/hivemq/license</b>
+           - name: configvol-1
+             mountPath: /opt/hivemq/license</b>
            ports:
            - containerPort: 8080
              protocol: TCP
