@@ -246,11 +246,98 @@ See [Generate a SHA256 Password](https://www.hivemq.com/docs/hivemq/latest/#hive
 
 ## Adding a license
 
-To use a license with this image, you must first encode it as a string.
+
+To use a license with this image, you can use the following two methods:
+
+### Encoding as an environment variable
 
 To do so, run `cat license.lic | base64` (replace `license.lic` with the path to your license file).
 
 Set the resulting string as the value for the `HIVEMQ_LICENSE` environment variable of the container.
+
+
+### Using volumes
+
+Of course you can also mount the license file into the container's filesystem.
+
+#### Kubernetes
+
+Kubernetes provides a mechanism called [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) for this purpose.
+
+Follow these steps to include the license file into the deployment directly:
+
+1. Create a ConfigMap containing your license file:  
+   `kubectl create configmap hmqlicense --from-file=path/to/your/license.lic`
+2. Add the volumes to your deployment spec:  
+   <pre>
+   apiVersion: v1
+   kind: ReplicationController
+   metadata:
+     name: hivemq-replica
+   spec:
+     replicas: 3
+     selector:
+       app: hivemq-cluster1
+     template:
+       metadata:
+         name: hivemq-cluster1
+         labels:
+           app: hivemq-cluster1
+       spec:
+         containers:
+         - name: hivemq-pods
+           image: hivemq/hivemq3:dns-latest
+           <b>volumeMounts:
+                   - name: configvol-1
+                     mountPath: /opt/hivemq/license</b>
+           ports:
+           - containerPort: 8080
+             protocol: TCP
+             name: web-ui
+           - containerPort: 1883
+             protocol: TCP
+             name: mqtt
+           env:
+           - name: HIVEMQ_DNS_DISCOVERY_ADDRESS
+             value: "hivemq-discovery.default.svc.cluster.local."
+           - name: HIVEMQ_DNS_DISCOVERY_TIMEOUT
+             value: "20"
+           - name: HIVEMQ_DNS_DISCOVERY_INTERVAL
+             value: "21"
+           readinessProbe:
+             tcpSocket:
+               port: 1883
+             initialDelaySeconds: 30
+             periodSeconds: 60
+             failureThreshold: 60
+           livenessProbe:
+             tcpSocket:
+               port: 1883
+             initialDelaySeconds: 30
+             periodSeconds: 60
+             failureThreshold: 60
+        <b>volumes:
+          - name: configvol-1
+            configMap:
+              name: hmqlicense</b>
+   ---
+   kind: Service
+   apiVersion: v1
+   metadata:
+     name: hivemq-discovery
+     annotations:
+       service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+   spec:
+     selector:
+       app: hivemq-cluster1
+     ports:
+       - protocol: TCP
+         port: 1883
+         targetPort: 1883
+     clusterIP: None           
+   </pre>
+3. Create the deployment:  
+   `kubectl create -f hivemq.yaml`
 
 ## Overriding the bind address
 
