@@ -319,10 +319,10 @@ Follow these steps to include the license file into the deployment directly:
              initialDelaySeconds: 30
              periodSeconds: 60
              failureThreshold: 60
-        <b>volumes:
-          - name: configvol-1
-            configMap:
-              name: hmqlicense</b>
+         <b>volumes:
+           - name: configvol-1
+             configMap:
+               name: hmqlicense</b>
    ---
    kind: Service
    apiVersion: v1
