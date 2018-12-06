@@ -6,7 +6,7 @@
             * [Building](#building)
             * [Usage](#usage)
                 * [Docker Swarm](#docker-swarm)
-                    * [Managing The Cluser](#managing-the-cluster)
+                    * [Managing The Cluster](#managing-the-cluster)
                 * [Kubernetes](#kubernetes)
                     * [Accessing the Web UI](#accessing-the-web-ui)
                     * [Accessing the MQTT port using external clients](#accessing-the-mqtt-port-using-external-clients)
@@ -38,6 +38,7 @@ The following environment variables should be used to customize the discovery an
 | HIVEMQ_BIND_ADDRESS | - | Set the *cluster transport* bind address, only necessary if the default policy (resolve hostname) fails |
 | HIVEMQ_WEB_UI_USER | admin | Set the username for the Web UI login |
 | HIVEMQ_WEB_UI_PASSWORD | SHA256 of `adminhivemq` (default) | Set the password hash for Web UI authentication |
+| HIVEMQ_HIVEMQ_NO_ROOT_STEP_DOWN | - | Disable root privilege step-down at startup by setting this to `true`. See [HiveMQ base image](hivemq4/base-image) for more information. |
 
 ## Building
 
